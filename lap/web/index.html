@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lap Guard Disable Page</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <h1>Lap Guard Disable Page</h1>
+      <p>
+        This page is for the laptop-wide blocker. Use it to unlock, pause protection, resume it, or turn on permanent disable.
+      </p>
+      <div class="status">
+        <div class="pill">Protection<strong id="protectionState">Loading</strong></div>
+        <div class="pill">Session<strong id="sessionState">Locked</strong></div>
+        <div class="pill">Blocked sites<strong id="blockedCount">0</strong></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Unlock</h2>
+      <div class="row">
+        <label>
+          Username
+          <input id="username" value="AJ_encoded" autocomplete="username" />
+        </label>
+        <label>
+          Password
+          <input id="password" type="password" autocomplete="current-password" />
+        </label>
+      </div>
+      <div class="buttons">
+        <button id="unlockButton">Unlock</button>
+        <button id="refreshButton" class="secondary">Refresh</button>
+      </div>
+      <p id="message" class="message hidden"></p>
+    </section>
+
+    <section class="card hidden" id="controlsCard">
+      <h2>Controls</h2>
+      <div class="buttons" id="durationButtons"></div>
+      <div class="spacer-sm"></div>
+      <div class="buttons">
+        <button id="resumeButton" class="secondary">Re-enable now</button>
+        <button id="disableButton" class="danger">Permanent disable</button>
+        <button id="enableButton" class="secondary">Enable protection</button>
+      </div>
+      <div class="spacer-md"></div>
+      <label>
+        Blocked domains
+        <textarea id="domains"></textarea>
+      </label>
+      <div class="buttons">
+        <button id="saveDomainsButton">Save domains</button>
+      </div>
+      <p class="muted">Pause durations: 2, 5, 10, 15, 25, 35, 50, 60 minutes.</p>
+    </section>
+  </main>
+
+  <script>
+    const durations = [2, 5, 10, 15, 25, 35, 50, 60];
+    const controlsCard = document.getElementById('controlsCard');
+    const durationButtons = document.getElementById('durationButtons');
+    const message = document.getElementById('message');
+    const domains = document.getElementById('domains');
+    const protectionState = document.getElementById('protectionState');
+    const sessionState = document.getElementById('sessionState');
+    const blockedCount = document.getElementById('blockedCount');
+
+    function showMessage(text, isError = false) {
+      message.textContent = text;
+      message.classList.remove('hidden');
+      message.classList.toggle('error', isError);
+      message.classList.toggle('success', !isError);
+    }
+
+    function hideMessage() {
+      message.classList.add('hidden');
+      message.classList.remove('error', 'success');
+    }
+
+    async function api(path, body) {
+      const response = await fetch(path, {
+        method: body ? 'POST' : 'GET',
+        headers: body ? { 'Content-Type': 'application/json' } : undefined,
+        body: body ? JSON.stringify(body) : undefined
+      });
+      return response.json();
+    }
+
+    async function refresh() {
+      const state = await api('/api/state');
+      protectionState.textContent = state.permanentDisable ? 'Permanently disabled' : (state.paused ? 'Paused' : 'Active');
+      sessionState.textContent = state.authenticated ? 'Unlocked' : 'Locked';
+      blockedCount.textContent = String(state.blockedDomains.length);
+      domains.value = state.blockedDomains.join('\n');
+      controlsCard.classList.toggle('hidden', !state.authenticated);
+    }
+
+    durations.forEach((minutes) => {
+      const button = document.createElement('button');
+      button.textContent = `${minutes} min`;
+      button.addEventListener('click', async () => {
+        const state = await api('/api/pause', { username: username.value, password: password.value, minutes });
+        if (!state.ok) {
+          showMessage(state.error || 'Could not pause protection', true);
+          return;
+        }
+        hideMessage();
+        await refresh();
+      });
+      durationButtons.appendChild(button);
+    });
+
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+
+    document.getElementById('unlockButton').addEventListener('click', async () => {
+      const result = await api('/api/auth', { username: username.value, password: password.value });
+      if (!result.ok) {
+        showMessage(result.error || 'Invalid credentials', true);
+        return;
+      }
+      hideMessage();
+      await refresh();
+    });
+
+    document.getElementById('refreshButton').addEventListener('click', refresh);
+    document.getElementById('resumeButton').addEventListener('click', async () => {
+      const result = await api('/api/resume', { username: username.value, password: password.value });
+      if (!result.ok) {
+        showMessage(result.error || 'Could not re-enable protection', true);
+        return;
+      }
+      hideMessage();
+      await refresh();
+    });
+
+    document.getElementById('disableButton').addEventListener('click', async () => {
+      const result = await api('/api/permanent-disable', { username: username.value, password: password.value });
+      if (!result.ok) {
+        showMessage(result.error || 'Could not disable protection permanently', true);
+        return;
+      }
+      hideMessage();
+      await refresh();
+    });
+
+    document.getElementById('enableButton').addEventListener('click', async () => {
+      const result = await api('/api/enable', { username: username.value, password: password.value });
+      if (!result.ok) {
+        showMessage(result.error || 'Could not enable protection', true);
+        return;
+      }
+      hideMessage();
+      await refresh();
+    });
+
+    document.getElementById('saveDomainsButton').addEventListener('click', async () => {
+      const result = await api('/api/domains', { username: username.value, password: password.value, blockedDomains: domains.value });
+      if (!result.ok) {
+        showMessage(result.error || 'Could not save domains', true);
+        return;
+      }
+      hideMessage();
+      await refresh();
+    });
+
+    refresh();
+  </script>
+</body>
+</html>

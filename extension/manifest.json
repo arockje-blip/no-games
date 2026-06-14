@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Lap Guard",
+  "version": "0.1.0",
+  "description": "Blocks a curated list of gaming and download sites, with password-protected timed pauses.",
+  "action": {
+    "default_title": "Lap Guard",
+    "default_popup": "lap/index.html"
+  },
+  "background": {
+    "service_worker": "lap/service-worker.js"
+  },
+  "permissions": [
+    "alarms",
+    "declarativeNetRequest",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "options_page": "lap/options.html",
+  "commands": {
+    "open-dashboard": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Open the Lap Guard dashboard"
+    }
+  }
+}

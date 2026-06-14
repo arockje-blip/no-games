@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lap Guard Options</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="card section">
+      <p class="kicker">Lap Guard options</p>
+      <h1 class="heading-tight">Custom block list</h1>
+      <p class="lead">
+        Add or remove domains here. Keep one domain per line, without paths.
+      </p>
+      <div class="notice" id="authNotice">Unlock with the dashboard first, then return here to edit domains.</div>
+      <div id="optionsPanel" class="hidden">
+        <form id="optionsForm" class="form-row">
+          <label>
+            Blocked domains
+            <textarea id="domainList" spellcheck="false" placeholder="roblox.com\nepicgames.com\nstore.steampowered.com"></textarea>
+          </label>
+          <div class="button-row">
+            <button type="submit">Save domains</button>
+            <button type="button" class="secondary" id="reloadButton">Reload</button>
+          </div>
+        </form>
+        <div class="spacer-sm"></div>
+        <div class="status-line">
+          <span>Current domains</span>
+          <strong id="domainCount">0</strong>
+        </div>
+        <div id="optionsError" class="notice hidden notice-top"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="options.js"></script>
+</body>
+</html>

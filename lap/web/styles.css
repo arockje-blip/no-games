@@ -1,0 +1,153 @@
+:root {
+  color-scheme: dark;
+  --bg: #08111f;
+  --panel: rgba(13, 24, 42, 0.94);
+  --text: #edf3f1;
+  --muted: #9fb0bf;
+  --accent: #79d78f;
+  --danger: #ff7070;
+  --border: rgba(255, 255, 255, 0.1);
+  font-family: "Segoe UI", "Aptos", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(121, 215, 143, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 112, 112, 0.12), transparent 24%),
+    linear-gradient(180deg, #06101c 0%, #0d1626 100%);
+  color: var(--text);
+  padding: 24px;
+}
+
+.shell {
+  width: min(940px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.34);
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+  margin: 0 0 10px;
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.message {
+  margin-top: 12px;
+}
+
+.message.error {
+  color: #ffacac;
+}
+
+.message.success {
+  color: #b7f4c4;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+input,
+textarea,
+button {
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  padding: 12px 14px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+button {
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--accent), #54b56d);
+  color: #07140d;
+  font-weight: 700;
+}
+
+button.secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+button.danger {
+  background: linear-gradient(180deg, #ff9898, var(--danger));
+  color: #250909;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.status {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pill {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pill strong {
+  display: block;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.spacer-sm {
+  height: 12px;
+}
+
+.spacer-md {
+  height: 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .row,
+  .status {
+    grid-template-columns: 1fr;
+  }
+}

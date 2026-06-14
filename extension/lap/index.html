@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lap Guard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="card">
+        <div class="card-inner">
+          <p class="kicker">Lap Guard</p>
+          <h1>Keep gaming sites blocked on this browser.</h1>
+          <p class="lead">
+            This extension blocks a curated list of game stores, launchers, and browser games.
+            Use the password gate to pause protection for a fixed number of minutes.
+          </p>
+          <div class="badge-row">
+            <span class="badge"><strong>Hotkey</strong> Ctrl+Shift+L</span>
+            <span class="badge"><strong>Pause</strong> 2, 5, 10, 15, 25, 35, 50, 60 min</span>
+            <span class="badge"><strong>User</strong> AJ_encoded</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner status">
+          <div class="status-line">
+            <span>Protection</span>
+            <strong id="protectionState">Loading</strong>
+          </div>
+          <div class="status-line">
+            <span>Session</span>
+            <strong id="sessionState">Locked</strong>
+          </div>
+          <div class="status-line">
+            <span>Blocked sites</span>
+            <strong id="blockedCount">0</strong>
+          </div>
+          <a class="button-link" href="options.html">Manage blocked domains</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="card section">
+        <h2>Unlock</h2>
+        <p class="muted">Enter the credentials to access pause controls.</p>
+        <form id="loginForm" class="form-row">
+          <label>
+            Username
+            <input id="username" name="username" autocomplete="username" placeholder="AJ_encoded" required />
+          </label>
+          <label>
+            Password
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Password" required />
+          </label>
+          <button type="submit">Unlock controls</button>
+          <div id="loginError" class="notice hidden"></div>
+        </form>
+      </div>
+
+      <div class="card section hidden" id="dashboardPanel">
+        <h2>Pause protection</h2>
+        <p class="muted">Choose a duration. Blocking automatically resumes when the timer ends.</p>
+        <div class="button-row" id="durationButtons"></div>
+        <div class="spacer-sm"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="refreshButton">Refresh status</button>
+          <button type="button" class="danger" id="resumeButton">Re-enable now</button>
+        </div>
+        <div class="spacer-md"></div>
+        <div class="status-line">
+          <span>Paused until</span>
+          <strong id="pausedUntil">Never</strong>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="index.js"></script>
+</body>
+</html>
