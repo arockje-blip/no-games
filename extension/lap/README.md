@@ -1,6 +1,6 @@
 # Lap Guard
 
-Lap Guard is a Chrome/Edge Manifest V3 extension that blocks a curated list of gaming and game-download domains, with a password-protected pause flow and a keyboard shortcut to open the dashboard.
+Lap Guard is a Chrome/Edge Manifest V3 extension that blocks a curated list of gaming, browser-game, and game-download domains, with a password-protected pause flow and a keyboard shortcut to open the dashboard.
 
 ## Included credentials
 
@@ -17,7 +17,7 @@ Lap Guard is a Chrome/Edge Manifest V3 extension that blocks a curated list of g
 
 ## What it blocks
 
-The default list covers common gaming stores, launchers, and browser game sites such as Roblox, Steam, Epic Games, Battle.net, Riot, EA, Ubisoft, Nintendo, PlayStation, Xbox, GOG, itch.io, and several browser game portals.
+The default list covers common gaming stores, launchers, and browser game sites such as Roblox, Steam, Epic Games, Battle.net, Riot, EA, Ubisoft, Nintendo, PlayStation, Xbox, GOG, itch.io, Cool Math Games, Y8, Kizi, SilverGames, and other browser game portals.
 
 ## Notes
 

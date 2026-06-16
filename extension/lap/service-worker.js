@@ -28,6 +28,15 @@ const DEFAULT_BLOCKED_DOMAINS = [
   "kongregate.com",
   "armorgames.com",
   "newgrounds.com",
+  "coolmathgames.com",
+  "y8.com",
+  "kizi.com",
+  "silvergames.com",
+  "addictinggames.com",
+  "kbhgames.com",
+  "gameflare.com",
+  "gamepix.com",
+  "mess.eu.org",
   "mediafire.com",
   "mega.nz",
   "uptodown.com",
@@ -41,21 +50,6 @@ const DEFAULT_BLOCKED_DOMAINS = [
   "getintopc.com",
   "steamunlocked.net",
   "fitgirl-repacks.site"
-];
-
-const BROAD_KEYWORD_PATTERNS = [
-  "game",
-  "games",
-  "gaming",
-  "download",
-  "downloads",
-  "apk",
-  "mod",
-  "mods",
-  "torrent",
-  "emulator",
-  "rom",
-  "iso"
 ];
 
 const AUTH = Object.freeze({
@@ -153,24 +147,6 @@ function buildRules(blockedDomains) {
       ]
     }
   }));
-
-  const keywordOffset = rules.length;
-  BROAD_KEYWORD_PATTERNS.forEach((pattern, index) => {
-    rules.push({
-      id: keywordOffset + index + 1,
-      priority: 1,
-      action: {
-        type: "block"
-      },
-      condition: {
-        urlFilter: pattern,
-        resourceTypes: [
-          "main_frame",
-          "sub_frame"
-        ]
-      }
-    });
-  });
 
   return rules;
 }
