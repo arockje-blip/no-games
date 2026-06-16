@@ -71,13 +71,13 @@ function Test-IsAdministrator {
   return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-function Ensure-StateDir {
+function Test-StateDir {
   if (-not (Test-Path $script:StateDir)) {
     New-Item -ItemType Directory -Path $script:StateDir | Out-Null
   }
 }
 
-function Normalize-Domain {
+function Format-Domain {
   param([string]$Domain)
 
   if ([string]::IsNullOrWhiteSpace($Domain)) {
@@ -106,7 +106,7 @@ function Get-DefaultState {
 }
 
 function Read-State {
-  Ensure-StateDir
+  Test-StateDir
 
   if (-not (Test-Path $script:StateFile)) {
     return Get-DefaultState
@@ -122,7 +122,7 @@ function Read-State {
     $domains = @()
     if ($null -ne $loaded.blockedDomains) {
       foreach ($item in $loaded.blockedDomains) {
-        $normalized = Normalize-Domain -Domain ([string]$item)
+        $normalized = Format-Domain -Domain ([string]$item)
         if ($normalized -and $domains -notcontains $normalized) {
           $domains += $normalized
         }
@@ -151,7 +151,7 @@ function Write-State {
     [bool]$PermanentDisable = $false
   )
 
-  Ensure-StateDir
+  Test-StateDir
 
   $payload = [ordered]@{
     blockedDomains = @($BlockedDomains)
@@ -186,7 +186,7 @@ function Update-HostsFile {
 
   $domains = @()
   foreach ($domain in $Domains) {
-    $normalized = Normalize-Domain -Domain $domain
+    $normalized = Format-Domain -Domain $domain
     if ($normalized -and $domains -notcontains $normalized) {
       $domains += $normalized
     }
@@ -262,7 +262,7 @@ function Update-UiState {
   $unlockStateLabel.Text = if ($script:IsAuthenticated) { 'Unlocked' } else { 'Locked' }
 }
 
-function Require-Auth {
+function Test-Authentication {
   if (-not $script:IsAuthenticated) {
     [System.Windows.Forms.MessageBox]::Show('Enter the correct username and password first.', $script:AppName, 'OK', 'Warning') | Out-Null
     return $false
@@ -271,7 +271,7 @@ function Require-Auth {
   return $true
 }
 
-function Pause-Protection {
+function Stop-Protection {
   param([int]$Minutes)
 
   if (-not ($script:AllowedDurations -contains $Minutes)) {
@@ -330,7 +330,7 @@ function Enable-Protection {
 function Save-Domains {
   $items = @()
   foreach ($line in ($domainBox.Lines)) {
-    $normalized = Normalize-Domain -Domain $line
+    $normalized = Format-Domain -Domain $line
     if ($normalized -and $items -notcontains $normalized) {
       $items += $normalized
     }
@@ -351,7 +351,7 @@ function Save-Domains {
   Update-UiState
 }
 
-function Try-Unlock {
+function Invoke-Unlock {
   if ($usernameBox.Text -ne $script:Username -or $passwordBox.Text -ne $script:Password) {
     [System.Windows.Forms.MessageBox]::Show('Invalid username or password.', $script:AppName, 'OK', 'Error') | Out-Null
     return
@@ -362,7 +362,7 @@ function Try-Unlock {
   controlsPanel.Enabled = $true
 }
 
-function On-ResumeTick {
+function Invoke-ResumeTick {
   if ($script:PermanentDisable -or $script:DisabledUntil -le 0) {
     return
   }
@@ -377,7 +377,7 @@ if (-not (Test-IsAdministrator)) {
   exit 1
 }
 
-Ensure-StateDir
+Test-StateDir
 $initialState = Read-State
 $script:BlockedDomains = @($initialState.blockedDomains)
 $script:DisabledUntil = [int64]$initialState.disabledUntil
@@ -448,7 +448,7 @@ $unlockButton = New-Object System.Windows.Forms.Button
 $unlockButton.Text = 'Unlock controls'
 $unlockButton.Location = New-Object System.Drawing.Point(240, 140)
 $unlockButton.Width = 108
-$unlockButton.Add_Click({ Try-Unlock })
+$unlockButton.Add_Click({ Invoke-Unlock })
 $loginGroup.Controls.Add($unlockButton)
 
 $unlockStateLabel = New-Object System.Windows.Forms.Label
@@ -512,7 +512,7 @@ foreach ($minutes in $script:AllowedDurations) {
   $button = New-Object System.Windows.Forms.Button
   $button.Text = "$selectedMinutes min"
   $button.Width = 76
-  $button.Add_Click({ Pause-Protection -Minutes $selectedMinutes })
+  $button.Add_Click({ Stop-Protection -Minutes $selectedMinutes })
   $button.Tag = $selectedMinutes
   $durationsPanel.Controls.Add($button)
 }
@@ -577,7 +577,7 @@ $footer.AutoSize = $true
 $footer.Location = New-Object System.Drawing.Point(20, 672)
 $form.Controls.Add($footer)
 
-$script:ResumeTimer.Add_Tick({ On-ResumeTick })
+$script:ResumeTimer.Add_Tick({ Invoke-ResumeTick })
 $script:ResumeTimer.Start()
 
 Update-UiState
